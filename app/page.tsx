@@ -11,6 +11,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { FileText } from "lucide-react"
 import { auth, provider, signInWithEmailAndPassword, signInWithPopup } from "@/lib/firebase"
+import { sendPasswordResetEmail } from "firebase/auth"
 
 export default function LoginPage() {
   const router = useRouter()
@@ -30,6 +31,19 @@ export default function LoginPage() {
       router.push("/editor")
     } catch (error: any) {
       setIsLoading(false)
+      alert(error.message)
+    }
+  }
+  const handleForgetPassword = async () => {
+    if (!email) {
+      alert("Please enter your email address.")
+      return
+    }
+
+    try {
+      await sendPasswordResetEmail(auth, email)
+      alert("Password reset email sent. Please check your inbox.")
+    } catch (error: any) {
       alert(error.message)
     }
   }
@@ -81,7 +95,7 @@ export default function LoginPage() {
                 <div className="space-y-2">
                   <div className="flex items-center justify-between">
                     <Label htmlFor="password">Password</Label>
-                    <Button variant="link" className="px-0 text-xs font-normal h-auto">
+                    <Button variant="link"  onClick={handleForgetPassword} className="px-0 text-xs font-normal h-auto">
                       Forgot password?
                     </Button>
                   </div>

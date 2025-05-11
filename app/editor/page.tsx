@@ -173,7 +173,6 @@ export default function EditorPage() {
   // Sidebar component for both mobile and desktop
   const NoteSidebar = () => (
     <div className="h-full flex flex-col overflow-hidden">
-      <h2 className="text-md font-semibold mb-2">Note History</h2>
       <div className="overflow-y-auto flex-1">
         {notes.length > 0 ? (
           notes.map((note, index) => (
