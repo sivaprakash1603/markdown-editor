@@ -5,7 +5,9 @@ import { EnhanceModal } from "@/components/enhance-modal";
 import { LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
+import {ThemeToggle} from "@/components/theme-toggle";
 import axios from "axios";
+import { useTheme } from "next-themes";
 
 const Editor = dynamic(
   () => import("@tinymce/tinymce-react").then((mod) => mod.Editor),
@@ -22,6 +24,8 @@ export default function EditorPage() {
   const [showEnhanceModal, setShowEnhanceModal] = useState(false);
   const [enhancedText, setEnhancedText] = useState("");
   const [currentIndex, setCurrentIndex] = useState(0);
+  const { theme,resolvedTheme } = useTheme();
+  const editorKey = `editor-${resolvedTheme}`;
 
   useEffect(() => {
     const fetchNotes = async () => {
@@ -33,7 +37,9 @@ export default function EditorPage() {
 
       if (res.ok && data.notes?.history?.length) {
         setNotes(data.notes.history);
-        setSelectedNote(data.notes.history[0]);
+        setSelectedNote("");
+        setContent("");
+        setCurrentIndex(data.notes.history.length);
       }
     };
     fetchNotes();
@@ -63,6 +69,12 @@ export default function EditorPage() {
       });
 
       if (!res.ok) throw new Error("Failed to save note");
+      setNotes((prev) => {
+        const updatedNotes = [...prev];
+        updatedNotes[currentIndex] = content; // Update the note at the current index
+        return updatedNotes;
+      });
+      setSelectedNote(content); // Update selected note
       alert("Note saved to history successfully!");
     } catch (error) {
       console.error(error);
@@ -117,6 +129,36 @@ export default function EditorPage() {
     setSelectedNote(null);
     setCurrentIndex(notes.length);
   };
+  const handleDelete = async () => {
+    if (selectedNote) {
+      const indexToDelete = notes.indexOf(selectedNote);
+    if (indexToDelete !== -1) {
+      const updatedNotes = [...notes];
+      updatedNotes.splice(indexToDelete, 1); // remove the note at the index
+
+      setNotes(updatedNotes);
+      setSelectedNote(updatedNotes[0] || null);
+      setContent(updatedNotes[0] || "");
+    }
+
+      try {
+        await fetch("/api/delete-note", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            currentIndex: currentIndex,
+            userId: localStorage.getItem("userId"),
+          }),
+        });
+        alert("Note deleted successfully!");
+      } catch (error) {
+        console.error(error);
+        alert("Error deleting note");
+      }
+    }
+  };
   
 
   const handleLogout = () => {
@@ -129,9 +171,12 @@ export default function EditorPage() {
       {/* Header */}
       <header className="border-b px-4 py-3 flex justify-between items-center">
         <h1 className="text-xl font-bold">Markdown Editor</h1>
+        <div className="flex items-end gap-3">
+        <ThemeToggle />
         <Button variant="ghost" size="icon" onClick={handleLogout}>
           <LogOut className="h-5 w-5" />
         </Button>
+        </div>
       </header>
 
       <div className="flex flex-1 overflow-hidden">
@@ -142,9 +187,11 @@ export default function EditorPage() {
             <div
               key={index}
               onClick={() => handleNoteSelect(note)}
-              className={`p-2 rounded cursor-pointer border hover:bg-gray-100 ${
-                selectedNote === note ? "bg-gray-200 font-medium" : ""
-              }`}
+              className={`p-2 rounded cursor-pointer border hover:bg-gray-100 dark:hover:bg-gray-700 ${
+  selectedNote === note
+    ? "bg-gray-500 text-white font-medium dark:bg-gray-600 hover:text-black"
+    : "bg-white dark:bg-gray-800 dark:text-white"
+}`}
               dangerouslySetInnerHTML={{ __html: note }}
             />
           ))}
@@ -152,31 +199,35 @@ export default function EditorPage() {
 
         {/* Editor */}
         <main className="w-4/5 flex flex-col">
-          <div className="flex gap-2 p-2">
+          <div className="flex gap-2 p-2 pl-4">
             <Button onClick={handleSave}>Save</Button>
             <Button onClick={handleEnhance}>Enhance Selection</Button>
             <Button onClick={handleNewNote}>New</Button>
+            <Button onClick={() => setContent("")}>Clear</Button>
+            <Button onClick={handleDelete}>Delete</Button>
           </div>
 
           <div className="flex-1 p-4">
             <Editor
-              value={content}
-              onInit={(evt, editor) => editorRef.current = editor}
-              onEditorChange={handleEditorChange}
-              disabled={false}
-              tinymceScriptSrc="/tinymce/tinymce.min.js"
-              init={{
-                height: "100%",
-                menubar: false,
-                // Removed readonly as it is overridden by the component
-                plugins:
-                  "lists link image charmap preview anchor searchreplace visualblocks fullscreen media table help wordcount",
-                toolbar:
-                  "undo redo | bold italic underline | alignleft aligncenter alignright | bullist numlist outdent indent | help",
-                content_style:
-                  "body { font-family:Helvetica,Arial,sans-serif; font-size:14px }",
-              }}
-            />
+  key={`editor-${theme}`} // Force re-render on theme change
+  value={content}
+  onInit={(evt, editor) => (editorRef.current = editor)}
+  onEditorChange={handleEditorChange}
+  tinymceScriptSrc="/tinymce/tinymce.min.js" // Your local TinyMCE path
+  init={{
+    height: "100%",
+    menubar: false,
+    skin: resolvedTheme === "dark" ? "tinymce-5-dark" : "tinymce-5",
+    content_css: resolvedTheme === "dark" ? "dark" : "default",
+    plugins:
+      "lists link image charmap preview anchor searchreplace visualblocks fullscreen media table help wordcount",
+    toolbar:
+      "undo redo | bold italic underline | alignleft aligncenter alignright | bullist numlist outdent indent | help",
+    content_style:
+      "body { font-family:Helvetica,Arial,sans-serif; font-size:14px }",
+  }}
+/>
+
           </div>
         </main>
       </div>
