@@ -1,5 +1,7 @@
 "use client"
 
+import type React from "react"
+
 import { useState } from "react"
 import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
@@ -10,7 +12,6 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { FileText } from "lucide-react"
 import { signInWithPopup } from "firebase/auth"
 import { auth, provider } from "@/lib/firebase"
-
 
 export default function SignUpPage() {
   const router = useRouter()
@@ -38,30 +39,30 @@ export default function SignUpPage() {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({ email, password, confirmPassword }),
-      });
+      })
 
       if (response.ok) {
-        const data = await response.json(); // assuming API returns userId
-        localStorage.setItem("userId", data.userId);
-        setIsLoading(false);
-        router.push("/editor");
+        const data = await response.json() // assuming API returns userId
+        localStorage.setItem("userId", data.userId)
+        setIsLoading(false)
+        router.push("/editor")
       } else {
-        const errorText = await response.text();
-        alert(errorText); // Handle error response from API
-        setIsLoading(false);
+        const errorText = await response.text()
+        alert(errorText) // Handle error response from API
+        setIsLoading(false)
       }
     } catch (error) {
       if (error instanceof Error) {
-        alert("An error occurred: " + error.message);
+        alert("An error occurred: " + error.message)
       } else {
-        alert("An unknown error occurred");
+        alert("An unknown error occurred")
       }
-      setIsLoading(false);
+      setIsLoading(false)
     }
-  };
+  }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background p-4">
+    <div className="flex min-h-screen items-center justify-center bg-background p-4 sm:p-6 lg:p-8">
       <Card className="w-full max-w-md">
         <CardHeader className="space-y-1 text-center">
           <div className="flex justify-center mb-2">
@@ -116,46 +117,44 @@ export default function SignUpPage() {
             </TabsContent>
             <TabsContent value="google">
               <div className="space-y-4 py-2">
-                {/* Google Sign Up logic */}
                 <Button
-  variant="outline"
-  className="w-full"
-  disabled={isLoading}
-  onClick={async () => {
-    try {
-      setIsLoading(true)
-      const result = await signInWithPopup(auth, provider)
-      const user = result.user
+                  variant="outline"
+                  className="w-full"
+                  disabled={isLoading}
+                  onClick={async () => {
+                    try {
+                      setIsLoading(true)
+                      const result = await signInWithPopup(auth, provider)
+                      const user = result.user
 
-      // Call your backend to register user in MongoDB
-      const response = await fetch("/api/signup", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          method: "google",
-          userId: user.uid,
-          email: user.email,
-        }),
-      })
+                      // Call your backend to register user in MongoDB
+                      const response = await fetch("/api/signup", {
+                        method: "POST",
+                        headers: {
+                          "Content-Type": "application/json",
+                        },
+                        body: JSON.stringify({
+                          method: "google",
+                          userId: user.uid,
+                          email: user.email,
+                        }),
+                      })
 
-      if (response.ok) {
-        router.push("/editor")
-      } else {
-        const errorText = await response.text()
-        alert(errorText)
-      }
-    } catch (error: any) {
-      alert("Google sign-in failed: " + error.message)
-    } finally {
-      setIsLoading(false)
-    }
-  }}
->
-  {isLoading ? "Signing in..." : "Sign up with Google"}
-</Button>
-
+                      if (response.ok) {
+                        router.push("/editor")
+                      } else {
+                        const errorText = await response.text()
+                        alert(errorText)
+                      }
+                    } catch (error: any) {
+                      alert("Google sign-in failed: " + error.message)
+                    } finally {
+                      setIsLoading(false)
+                    }
+                  }}
+                >
+                  {isLoading ? "Signing in..." : "Sign up with Google"}
+                </Button>
               </div>
             </TabsContent>
           </Tabs>

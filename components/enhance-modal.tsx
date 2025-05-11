@@ -1,5 +1,6 @@
 "use client"
 
+import { Button } from "@/components/ui/button"
 import {
   Dialog,
   DialogContent,
@@ -8,7 +9,6 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog"
-import { Button } from "@/components/ui/button"
 
 interface EnhanceModalProps {
   originalText: string
@@ -19,30 +19,35 @@ interface EnhanceModalProps {
 
 export function EnhanceModal({ originalText, enhancedText, onKeep, onDiscard }: EnhanceModalProps) {
   return (
-    <Dialog open={true}>
-      <DialogContent className="sm:max-w-md">
+    <Dialog open={true} onOpenChange={onDiscard}>
+      <DialogContent className="sm:max-w-md md:max-w-lg">
         <DialogHeader>
           <DialogTitle>Enhanced Text</DialogTitle>
-          <DialogDescription>Review the AI-enhanced version of your text</DialogDescription>
+          <DialogDescription>Review the AI-enhanced version of your text.</DialogDescription>
         </DialogHeader>
-
         <div className="grid gap-4 py-4">
-          <div className="space-y-2">
-            <h3 className="text-sm font-medium">Original</h3>
-            <div className="rounded-md bg-muted p-3 text-sm">{originalText}</div>
-          </div>
-
-          <div className="space-y-2">
-            <h3 className="text-sm font-medium">Enhanced</h3>
-            <div className="rounded-md bg-muted p-3 text-sm">{enhancedText}</div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <h3 className="font-medium mb-2">Original</h3>
+              <div className="p-3 border rounded-md bg-muted/50 text-sm overflow-auto max-h-[200px]">
+                {originalText}
+              </div>
+            </div>
+            <div>
+              <h3 className="font-medium mb-2">Enhanced</h3>
+              <div className="p-3 border rounded-md bg-muted/50 text-sm overflow-auto max-h-[200px]">
+                {enhancedText}
+              </div>
+            </div>
           </div>
         </div>
-
-        <DialogFooter className="sm:justify-between">
-          <Button variant="outline" onClick={onDiscard}>
+        <DialogFooter className="flex flex-col sm:flex-row gap-2 sm:gap-0">
+          <Button type="button" variant="outline" onClick={onDiscard}>
             Discard
           </Button>
-          <Button onClick={onKeep}>Keep</Button>
+          <Button type="button" onClick={onKeep}>
+            Keep Enhancement
+          </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

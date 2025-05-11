@@ -17,7 +17,8 @@ export async function POST(req: NextRequest) {
   try {
     const response = await together.chat.completions.create({
       model: "meta-llama/Meta-Llama-3.1-8B-Instruct-Turbo",
-      messages: [{ role: "user", content: `Enhance this text: ${text} just give the text alone not extra things` }],
+      messages: [{"role": "system", "content": "You are a helpful text editor assistant that enhances text."},
+        { role: "user", content: `Enhance this text: ${text} just give the text alone not extra things.` }],
     });
 
     const enhancedText = response.choices?.[0]?.message?.content;

@@ -1,5 +1,7 @@
 "use client"
 
+import type React from "react"
+
 import { useState } from "react"
 import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
@@ -19,7 +21,7 @@ export default function LoginPage() {
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsLoading(true)
-  
+
     try {
       const userCredential = await signInWithEmailAndPassword(auth, email, password)
       const user = userCredential.user
@@ -31,11 +33,10 @@ export default function LoginPage() {
       alert(error.message)
     }
   }
-  
+
   const handleGoogleLogin = async () => {
     setIsLoading(true)
 
-  
     try {
       const result = await signInWithPopup(auth, provider)
       const user = result.user
@@ -47,10 +48,9 @@ export default function LoginPage() {
       alert(error.message)
     }
   }
-  
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background p-4">
+    <div className="flex min-h-screen items-center justify-center bg-background p-4 sm:p-6 lg:p-8">
       <Card className="w-full max-w-md">
         <CardHeader className="space-y-1 text-center">
           <div className="flex justify-center mb-2">
@@ -110,11 +110,7 @@ export default function LoginPage() {
         <CardFooter className="flex flex-col">
           <div className="text-sm text-muted-foreground text-center">
             Don&apos;t have an account?{" "}
-            <Button
-  variant="link"
-  className="p-0 h-auto"
-  onClick={() => router.push("/signup")} // Navigate to the SignUp page
->
+            <Button variant="link" className="p-0 h-auto" onClick={() => router.push("/signup")}>
               Sign up
             </Button>
           </div>
