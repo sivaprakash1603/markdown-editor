@@ -2,7 +2,7 @@
 import { useState, useEffect, useRef } from "react"
 import dynamic from "next/dynamic"
 import { EnhanceModal } from "@/components/enhance-modal"
-import { LogOut, Menu, Save, Wand2, Plus, Trash2 ,Brush} from "lucide-react"
+import { LogOut, Menu, Save, Wand2, Plus, Trash2 ,Brush,Download} from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { useRouter } from "next/navigation"
 import { ThemeToggle } from "@/components/theme-toggle"
@@ -165,6 +165,16 @@ export default function EditorPage() {
     }
   }
 
+  const handleDownload = () => {
+    const blob = new Blob([content], { type: "text/markdown" })
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement("a")
+    a.href = url
+    a.download = "note.md"
+    a.click()
+    URL.revokeObjectURL(url)
+  }
+
   const handleLogout = () => {
     localStorage.removeItem("userId")
     router.push("/")
@@ -253,6 +263,10 @@ export default function EditorPage() {
               <Trash2 className="h-4 w-4" />
               <span className="hidden sm:inline">Delete</span>
             </Button>
+            <Button onClick={handleDownload} className="flex items-center gap-1">
+              <Download className="h-4 w-4" />
+              <span className="hidden sm:inline">Download</span>
+            </Button>
           </div>
 
           <div className="flex-1 p-2 sm:p-4">
@@ -268,9 +282,9 @@ export default function EditorPage() {
                 skin: resolvedTheme === "dark" ? "tinymce-5-dark" : "tinymce-5",
                 content_css: resolvedTheme === "dark" ? "dark" : "default",
                 plugins:
-                  "lists link image charmap preview anchor searchreplace visualblocks fullscreen media table help wordcount",
+                  "lists link image charmap preview anchor searchreplace visualblocks fullscreen media table help wordcount save link searchreplace table charmap",
                 toolbar:
-                  "undo redo | bold italic underline | alignleft aligncenter alignright | bullist numlist outdent indent | help",
+                  "undo redo | bold italic underline | alignleft aligncenter alignright | bullist numlist outdent indent link searchreplace charmap |table tabledelete | tableprops tablerowprops tablecellprops | tableinsertrowbefore tableinsertrowafter tabledeleterow | tableinsertcolbefore tableinsertcolafter tabledeletecol | fullscreen help",
                 content_style: "body { font-family:Helvetica,Arial,sans-serif; font-size:14px }",
                 mobile: {
                   menubar: false,
