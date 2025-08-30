@@ -85,9 +85,19 @@ export default function LoginPage() {
       })
       setIsLoading(false)
       setShowSuccess(true)
-      setTimeout(() => {
-        router.push("/editor")
-      }, 2000)
+
+      // Check if there's a stored redirect URL
+      const redirectUrl = sessionStorage.getItem('redirectAfterLogin')
+      if (redirectUrl) {
+        sessionStorage.removeItem('redirectAfterLogin')
+        setTimeout(() => {
+          router.push(redirectUrl)
+        }, 2000)
+      } else {
+        setTimeout(() => {
+          router.push("/editor")
+        }, 2000)
+      }
     } catch (error: any) {
       setIsLoading(false)
       alert(error.message)
@@ -140,9 +150,19 @@ export default function LoginPage() {
       })
       setIsLoading(false)
       setShowSuccess(true)
-      setTimeout(() => {
-        router.push("/editor")
-      }, 2000)
+
+      // Check if there's a stored redirect URL
+      const redirectUrl = sessionStorage.getItem('redirectAfterLogin')
+      if (redirectUrl) {
+        sessionStorage.removeItem('redirectAfterLogin')
+        setTimeout(() => {
+          router.push(redirectUrl)
+        }, 2000)
+      } else {
+        setTimeout(() => {
+          router.push("/editor")
+        }, 2000)
+      }
     } catch (error: any) {
       setIsLoading(false)
       alert(error.message)

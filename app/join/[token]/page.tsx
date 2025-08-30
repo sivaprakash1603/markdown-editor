@@ -25,6 +25,9 @@ export default function JoinWorkspacePage() {
     const joinWorkspace = async () => {
       try {
         if (!user) {
+          // Store the current URL to redirect back after login
+          const currentUrl = window.location.href
+          sessionStorage.setItem('redirectAfterLogin', currentUrl)
           router.push("/")
           return
         }
@@ -54,6 +57,8 @@ export default function JoinWorkspacePage() {
         if (response.ok) {
           setWorkspace(data.workspace)
           setStatus('success')
+          // Clear the stored redirect URL since join was successful
+          sessionStorage.removeItem('redirectAfterLogin')
           setTimeout(() => {
             router.push("/workspaces")
           }, 3000)
@@ -70,7 +75,7 @@ export default function JoinWorkspacePage() {
     if (invitationToken) {
       joinWorkspace()
     }
-  }, [invitationToken, router])
+  }, [invitationToken, router, user])
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 dark:from-gray-900 dark:via-blue-900/20 dark:to-purple-900/20 flex items-center justify-center p-4">

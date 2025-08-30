@@ -83,9 +83,19 @@ export default function SignUpPage() {
         })
         setIsLoading(false)
         setShowSuccess(true)
-        setTimeout(() => {
-          router.push("/editor")
-        }, 2000)
+
+        // Check if there's a stored redirect URL
+        const redirectUrl = sessionStorage.getItem('redirectAfterLogin')
+        if (redirectUrl) {
+          sessionStorage.removeItem('redirectAfterLogin')
+          setTimeout(() => {
+            router.push(redirectUrl)
+          }, 2000)
+        } else {
+          setTimeout(() => {
+            router.push("/editor")
+          }, 2000)
+        }
       } else {
         const errorText = await response.text()
         alert(errorText) // Handle error response from API
@@ -234,9 +244,19 @@ export default function SignUpPage() {
                           })
                           setIsLoading(false)
                           setShowSuccess(true)
-                          setTimeout(() => {
-                            router.push("/editor")
-                          }, 2000)
+
+                          // Check if there's a stored redirect URL
+                          const redirectUrl = sessionStorage.getItem('redirectAfterLogin')
+                          if (redirectUrl) {
+                            sessionStorage.removeItem('redirectAfterLogin')
+                            setTimeout(() => {
+                              router.push(redirectUrl)
+                            }, 2000)
+                          } else {
+                            setTimeout(() => {
+                              router.push("/editor")
+                            }, 2000)
+                          }
                         } else {
                           alert("Failed to create account")
                         }
