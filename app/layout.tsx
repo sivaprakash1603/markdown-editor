@@ -1,10 +1,8 @@
 import type React from "react"
 import { Inter } from "next/font/google"
 import { ThemeProvider } from "@/components/theme-provider"
-import useIsomorphicLayoutEffect from "@/hooks/use-isomorphic-layout-effect"
-import { useIsMobile } from "@/hooks/use-mobile"
-import { useTheme } from "next-themes"
-import { useEffect } from "react";
+import { AuthProvider } from "@/contexts/AuthContext"
+import { Toaster } from "@/components/ui/toaster"
 import "./globals.css"
 
 const inter = Inter({ subsets: ["latin"] })
@@ -24,7 +22,10 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body className={inter.className}>
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
-          {children}
+          <AuthProvider>
+            {children}
+            <Toaster />
+          </AuthProvider>
         </ThemeProvider>
       </body>
     </html>

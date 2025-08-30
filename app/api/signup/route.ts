@@ -4,7 +4,7 @@ import { createUserWithEmailAndPassword } from "firebase/auth"
 
 export async function POST(request: Request) {
   const body = await request.json()
-  const { method, email, password, confirmPassword, userId } = body
+  const { method, email, password, confirmPassword, userId, name } = body
 
   try {
     let uid = userId // May be undefined if method is email
@@ -37,11 +37,19 @@ export async function POST(request: Request) {
       await usersCollection.insertOne({
         userId: uid,
         email: email,
-        history: [],
+        name: name || null,
+        notes: [], // Changed from history to notes
       })
     }
 
-    return new Response("User registered successfully", { status: 200 })
+    return new Response(JSON.stringify({ 
+      userId: uid, 
+      email: email, 
+      name: name || null 
+    }), { 
+      status: 200,
+      headers: { 'Content-Type': 'application/json' }
+    })
   } catch (error: any) {
     return new Response(error.message || "Internal server error", { status: 500 })
   }

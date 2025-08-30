@@ -2,10 +2,10 @@ import { connectToDatabase } from "@/lib/mongodb"
 
 export async function POST(request: Request) {
   const body = await request.json()
-  const { userId, currentIndex } = body
+  const { userId, noteId } = body
 
   try {
-    if (userId === undefined || currentIndex === undefined) {
+    if (!userId || !noteId) {
       return new Response("Missing required fields", { status: 400 })
     }
 
@@ -14,16 +14,15 @@ export async function POST(request: Request) {
 
     const user = await usersCollection.findOne({ userId })
 
-    if (!user || !Array.isArray(user.history)) {
-      return new Response("User not found or history is not an array", { status: 404 })
+    if (!user || !Array.isArray(user.notes)) {
+      return new Response("User not found or notes is not an array", { status: 404 })
     }
 
-    const updatedHistory = [...user.history]
-    updatedHistory.splice(currentIndex, 1) // remove the element at currentIndex
+    const updatedNotes = user.notes.filter((note: any) => note.id !== noteId)
 
     await usersCollection.updateOne(
       { userId },
-      { $set: { history: updatedHistory } }
+      { $set: { notes: updatedNotes } }
     )
 
     return new Response("Note deleted successfully", { status: 200 })

@@ -17,10 +17,10 @@ export async function GET(req) {
       return NextResponse.json({ error: "User not found" }, { status: 404 })
     }
 
-    const history = user.history || []
+    const notes = user.notes || user.history || []
 
-    // ✅ Wrap history in a `notes` object so frontend can access data.notes.history
-    return NextResponse.json({ notes: { history } }, { status: 200 })
+    // ✅ Return notes array directly
+    return NextResponse.json({ notes }, { status: 200 })
 
   } catch (error) {
     return NextResponse.json({ error: "Failed to fetch user notes" }, { status: 500 })

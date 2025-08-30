@@ -1,12 +1,12 @@
-// /app/api/save-note/route.ts (assuming App Router)
+// /app/api/save-notes/route.ts (assuming App Router)
 import { connectToDatabase } from "@/lib/mongodb"
 
 export async function POST(request: Request) {
   const body = await request.json()
-  const { content, userId,currentIndex } = body
+  const { note, userId } = body
 
   try {
-    if (!content || !userId) {
+    if (!note || !userId) {
       return new Response("Missing required fields", { status: 400 })
     }
 
@@ -18,13 +18,24 @@ export async function POST(request: Request) {
       return new Response("User not found", { status: 404 })
     }
 
-    // Push content as a string to the history array
+    // Update or add the note to the notes array
+    const existingNotes = user.notes || []
+    const noteIndex = existingNotes.findIndex((n: any) => n.id === note.id)
+
+    if (noteIndex !== -1) {
+      // Update existing note
+      existingNotes[noteIndex] = note
+    } else {
+      // Add new note
+      existingNotes.push(note)
+    }
+
     await usersCollection.updateOne(
       { userId },
-      { $set: { [`history.${currentIndex}`]: content } }
+      { $set: { notes: existingNotes } }
     )
 
-    return new Response("Note saved to history successfully", { status: 200 })
+    return new Response("Note saved successfully", { status: 200 })
   } catch (error: any) {
     return new Response(error.message || "Internal server error", { status: 500 })
   }
