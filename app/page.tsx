@@ -58,10 +58,30 @@ export default function LoginPage() {
     try {
       const userCredential = await signInWithEmailAndPassword(auth, email, password)
       const user = userCredential.user
+
+      // Check if user exists in MongoDB or create them
+      const checkResponse = await fetch("/api/check-user", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          userId: user.uid,
+          email: user.email || undefined,
+          name: user.displayName || undefined,
+        }),
+      })
+
+      if (!checkResponse.ok) {
+        throw new Error("Failed to verify user account")
+      }
+
+      const userData = await checkResponse.json()
+
       login({
-        userId: user.uid,
-        email: user.email || undefined,
-        name: user.displayName || undefined,
+        userId: userData.userId,
+        email: userData.email,
+        name: userData.name,
       })
       setIsLoading(false)
       setShowSuccess(true)
@@ -93,10 +113,30 @@ export default function LoginPage() {
     try {
       const result = await signInWithPopup(auth, provider)
       const user = result.user
+
+      // Check if user exists in MongoDB or create them
+      const checkResponse = await fetch("/api/check-user", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          userId: user.uid,
+          email: user.email || undefined,
+          name: user.displayName || undefined,
+        }),
+      })
+
+      if (!checkResponse.ok) {
+        throw new Error("Failed to verify user account")
+      }
+
+      const userData = await checkResponse.json()
+
       login({
-        userId: user.uid,
-        email: user.email || undefined,
-        name: user.displayName || undefined,
+        userId: userData.userId,
+        email: userData.email,
+        name: userData.name,
       })
       setIsLoading(false)
       setShowSuccess(true)

@@ -212,26 +212,25 @@ export default function SignUpPage() {
                         const result = await signInWithPopup(auth, provider)
                         const user = result.user
 
-                        // Call your backend to register user in MongoDB
-                        const response = await fetch("/api/signup", {
+                        // Check if user exists in MongoDB or create them
+                        const checkResponse = await fetch("/api/check-user", {
                           method: "POST",
                           headers: {
                             "Content-Type": "application/json",
                           },
                           body: JSON.stringify({
-                            method: "google",
                             userId: user.uid,
                             email: user.email,
                             name: user.displayName,
                           }),
                         })
 
-                        if (response.ok) {
-                          const data = await response.json()
+                        if (checkResponse.ok) {
+                          const userData = await checkResponse.json()
                           login({
-                            userId: data.userId,
-                            email: data.email,
-                            name: data.name,
+                            userId: userData.userId,
+                            email: userData.email,
+                            name: userData.name,
                           })
                           setIsLoading(false)
                           setShowSuccess(true)
@@ -239,8 +238,7 @@ export default function SignUpPage() {
                             router.push("/editor")
                           }, 2000)
                         } else {
-                          const errorText = await response.text()
-                          alert(errorText)
+                          alert("Failed to create account")
                         }
                       } catch (error: any) {
                         alert("Google sign-in failed: " + error.message)
