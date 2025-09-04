@@ -316,60 +316,62 @@ export default function WorkspaceSettingsPage() {
               {members.map((member) => (
                 <div
                   key={member.userId}
-                  className="flex items-center justify-between p-4 border border-gray-200 dark:border-gray-700 rounded-lg bg-gray-50/50 dark:bg-gray-800/50"
+                  className="flex flex-col sm:flex-row items-start sm:items-center justify-between p-4 border border-gray-200 dark:border-gray-700 rounded-lg bg-gray-50/50 dark:bg-gray-800/50 gap-4 overflow-hidden"
                 >
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
+                  <div className="flex items-center gap-3 min-w-0 flex-1 overflow-hidden">
+                    <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center flex-shrink-0">
                       <span className="text-white font-semibold text-sm">
                         {(member.name || member.email || "U").charAt(0).toUpperCase()}
                       </span>
                     </div>
-                    <div>
-                      <h3 className="font-medium text-gray-900 dark:text-gray-100">
+                    <div className="min-w-0 flex-1 overflow-hidden">
+                      <h3 className="font-medium text-gray-900 dark:text-gray-100 truncate whitespace-nowrap">
                         {member.name || member.email || "Unknown User"}
                       </h3>
-                      <p className="text-sm text-gray-600 dark:text-gray-400">
+                      <p className="text-sm text-gray-600 dark:text-gray-400 truncate whitespace-nowrap">
                         {member.email}
                       </p>
-                      <p className="text-xs text-gray-500 dark:text-gray-500">
+                      <p className="text-xs text-gray-500 dark:text-gray-500 whitespace-nowrap">
                         Joined {new Date(member.joinedAt).toLocaleDateString()}
                       </p>
                     </div>
                   </div>
 
-                  <div className="flex items-center gap-3">
-                    <Badge className={getRoleBadgeColor(member.role)}>
-                      <div className="flex items-center gap-1">
+                  <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 w-full sm:w-auto">
+                    <Badge className={`${getRoleBadgeColor(member.role)} w-fit self-start sm:self-center truncate`}>
+                      <div className="flex items-center gap-1 min-w-0">
                         {getRoleIcon(member.role)}
-                        <span className="capitalize">{member.role}</span>
+                        <span className="capitalize truncate">{member.role}</span>
                       </div>
                     </Badge>
 
-                    <Select
-                      value={member.role}
-                      onValueChange={(value) => updateMemberRole(member.userId, value)}
-                      disabled={member.userId === user?.userId}
-                    >
-                      <SelectTrigger className="w-32">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="read-only">Read Only</SelectItem>
-                        <SelectItem value="read-write">Read & Write</SelectItem>
-                        <SelectItem value="admin">Admin</SelectItem>
-                      </SelectContent>
-                    </Select>
-
-                    {member.userId !== user?.userId && (
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => removeMember(member.userId)}
-                        className="hover:bg-red-50 dark:hover:bg-red-900/20 text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300"
+                    <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 w-full sm:w-auto">
+                      <Select
+                        value={member.role}
+                        onValueChange={(value) => updateMemberRole(member.userId, value)}
+                        disabled={member.userId === user?.userId}
                       >
-                        <Trash2 className="w-4 h-4" />
-                      </Button>
-                    )}
+                        <SelectTrigger className="w-full sm:w-32">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="read-only">Read Only</SelectItem>
+                          <SelectItem value="read-write">Read & Write</SelectItem>
+                          <SelectItem value="admin">Admin</SelectItem>
+                        </SelectContent>
+                      </Select>
+
+                      {member.userId !== user?.userId && (
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => removeMember(member.userId)}
+                          className="hover:bg-red-50 dark:hover:bg-red-900/20 text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 flex-shrink-0 w-full sm:w-auto"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </Button>
+                      )}
+                    </div>
                   </div>
                 </div>
               ))}
@@ -379,7 +381,7 @@ export default function WorkspaceSettingsPage() {
 
         {/* Invitation Dialog */}
         <Dialog open={showInviteDialog} onOpenChange={setShowInviteDialog}>
-          <DialogContent className="sm:max-w-md">
+          <DialogContent className="sm:max-w-md mx-4">
             <DialogHeader>
               <DialogTitle>Invitation Link Generated</DialogTitle>
               <DialogDescription>
@@ -389,7 +391,7 @@ export default function WorkspaceSettingsPage() {
             <div className="space-y-4">
               <div>
                 <Label htmlFor="invite-link">Invitation Link</Label>
-                <div className="flex gap-2 mt-1">
+                <div className="flex flex-col sm:flex-row gap-2 mt-1">
                   <Input
                     id="invite-link"
                     value={invitationLink}
@@ -399,7 +401,7 @@ export default function WorkspaceSettingsPage() {
                   <Button
                     onClick={copyToClipboard}
                     variant="outline"
-                    className="flex items-center gap-2"
+                    className="w-full sm:w-auto flex items-center gap-2"
                   >
                     {copied ? (
                       <>
@@ -418,7 +420,7 @@ export default function WorkspaceSettingsPage() {
               <div className="flex justify-end">
                 <Button
                   onClick={() => setShowInviteDialog(false)}
-                  className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white"
+                  className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white w-full sm:w-auto"
                 >
                   Done
                 </Button>

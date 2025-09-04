@@ -131,7 +131,7 @@ export default function WorkspacesPage() {
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 dark:from-gray-900 dark:via-blue-900/20 dark:to-purple-900/20 p-4">
       <div className="max-w-6xl mx-auto">
         {/* Header */}
-        <div className="flex justify-between items-center mb-8">
+        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-8">
           <div className="flex items-center gap-4">
             <Button
               variant="ghost"
@@ -154,7 +154,7 @@ export default function WorkspacesPage() {
 
           <Dialog open={showCreateDialog} onOpenChange={setShowCreateDialog}>
             <DialogTrigger asChild>
-              <Button className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white shadow-lg hover-lift">
+              <Button className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white shadow-lg hover-lift w-full sm:w-auto">
                 <Plus className="w-4 h-4 mr-2" />
                 Create Workspace
               </Button>
@@ -220,7 +220,7 @@ export default function WorkspacesPage() {
             </p>
             <Button
               onClick={() => setShowCreateDialog(true)}
-              className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white"
+              className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white w-full sm:w-auto"
             >
               <Plus className="w-4 h-4 mr-2" />
               Create Workspace
@@ -236,13 +236,13 @@ export default function WorkspacesPage() {
               >
                 <CardHeader className="pb-3">
                   <div className="flex items-start justify-between">
-                    <div className="flex items-center gap-2">
-                      <div className="p-2 rounded-lg bg-gradient-to-br from-blue-500 to-purple-600 shadow-sm">
+                    <div className="flex items-center gap-2 min-w-0 flex-1">
+                      <div className="p-2 rounded-lg bg-gradient-to-br from-blue-500 to-purple-600 shadow-sm flex-shrink-0">
                         <FileText className="h-4 w-4 text-white" />
                       </div>
-                      <div>
-                        <CardTitle className="text-lg">{workspace.name}</CardTitle>
-                        <Badge className={`mt-1 ${getRoleBadgeColor(workspace.role)}`}>
+                      <div className="min-w-0 flex-1">
+                        <CardTitle className="text-lg truncate">{workspace.name}</CardTitle>
+                        <Badge className={`mt-1 ${getRoleBadgeColor(workspace.role)} w-fit`}>
                           <div className="flex items-center gap-1">
                             {getRoleIcon(workspace.role)}
                             <span className="capitalize">{workspace.role}</span>
